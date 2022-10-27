@@ -1,0 +1,26 @@
+name: PurgeLogs
+description: |+
+  Purges log tables in multipe databases
+category: 
+owner: sa
+notifyEmailOperator: DBAs
+steps:
+- name: EXEC Northwind.log.PurgeLogs
+  subsystem: TSQL
+  command: |-
+    exec log.PurgeLogs
+  database: Northwind
+- name: EXEC MyDb.log.PurgeLogs
+  subsystem: TSQL
+  command: |-
+    exec MyDb.log.PurgeLogs
+- name: EXEC Utility.log.PurgeLogs 90
+  subsystem: TSQL
+  command: |-
+    exec Utility.log.PurgeLogs 90
+  database: Utility
+schedules:
+- name: Hourly at 14 past
+  interval: every 1 hours at 12:14
+  target: prod
+  enabled: true

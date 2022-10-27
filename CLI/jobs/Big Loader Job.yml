@@ -1,0 +1,30 @@
+name: Big Loader Job
+description: ""
+category: 
+owner: sa
+notifyEmailOperator: DB Support Team
+steps:
+- name: Run Console App
+  subsystem: CmdExec
+  command: |-
+    CALL c:\loaders\my.loader.app.exe Server=.,3180 name=SanityCheck site=MyFactory
+  database: 
+- name: Run Stored Procedure
+  subsystem: TSQL
+  command: |-
+    EXEC dbo.Update_Loader_History 'MyFactory'
+  database: MyDb
+  proxy: 
+- name: Run SSIS Job
+  subsystem: SSIS
+  command: |-
+    /Server "$(ESCAPE_NONE(SRVR))" /SQL "My SSIS Package"
+schedules:
+- name: Every 10 minutes
+  interval: every 10 minutes at 00:04
+  target: local
+  enabled: false
+- name: Shiftly
+  interval: every 12 hours at 06:05
+  target: prod
+  enabled: true

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "sql-agent-cli": {
+      "commandName": "Project",
+      "commandLineArgs": "export -s p673 -p ..\\..\\..\\jobs -t prod"
+    }
+  }
+}

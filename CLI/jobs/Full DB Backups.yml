@@ -1,0 +1,34 @@
+name: Full DB Backups
+description: ""
+category: Database Maintenance
+owner: sa
+notifyEmailOperator: DBAs
+steps:
+- name: Primary Node Check
+  subsystem: TSQL
+  command: |-
+    IF (SELECT CONVERT(sysname,DatabasePropertyEx(DB_NAME(),'Updateability'))) <> 'READ_ONLY'
+    BEGIN
+    print 'currently server is primary, starting job'
+    -- start the job
+    end
+    else
+    begin
+    print 'currently server is read- only, exiting'
+    --skip the job
+    RAISERROR('50005 Not the primary SQL AG node, skipping job',16, -1, @@servername)
+    end
+  database: MyDb
+  proxy: 
+- name: Full Backups
+  subsystem: SSIS
+  command: |-
+    /Server "$(ESCAPE_NONE(SRVR))" /SQL "Maintenance Plans\Backup Databases" /set "\Package\Full Backups.Disable;false"
+  database: 
+  proxy: 
+schedules:
+- name: Daily at 1am
+  interval: every day at 01:00
+  enabled: true
+  target: prod
+  
