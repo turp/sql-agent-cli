@@ -43,6 +43,22 @@ public class ListCommand : Command<ServerSettings>
 	private string _sql = @$"
             -- https://www.mssqltips.com/sqlservertip/5019/sql-server-agent-job-schedule-reporting/
 
+			-- manual jobs
+            SELECT
+	            j.name [Name]
+	            , j.enabled [Enabled]
+	            , '' as [Schedule Name]
+	            , '' as freq_recurrence_factor
+	            , 'Manual' [Frequency]
+	            , '' as Days
+	            , '' as [Time]
+            FROM msdb.dbo.sysjobs j
+	           left join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
+	           left join msdb.dbo.sysschedules s on sysjobschedules.schedule_id = s.schedule_id
+            WHERE s.freq_type IS NULL
+
+			UNION
+
             -- jobs with daily schedule
             SELECT
 	            j.name [Name]
@@ -60,8 +76,7 @@ public class ListCommand : Command<ServerSettings>
             FROM msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
 	            inner join msdb.dbo.sysschedules s on sysjobschedules.schedule_id = s.schedule_id
-            WHERE j.enabled = 1
-            and freq_type = 4
+            WHERE freq_type = 4
 
             UNION
 
@@ -91,8 +106,7 @@ public class ListCommand : Command<ServerSettings>
             FROM msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
 	            inner join msdb.dbo.sysschedules s on sysjobschedules.schedule_id = s.schedule_id
-            WHERE j.enabled = 1
-            AND freq_type = 8
+            WHERE freq_type = 8
 
             UNION
 
@@ -134,8 +148,7 @@ public class ListCommand : Command<ServerSettings>
             from msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
 	            inner join msdb.dbo.sysschedules s on sysjobschedules.schedule_id = s.schedule_id
-            WHERE j.enabled = 1
-            AND freq_type in (16, 32)
+            WHERE freq_type in (16, 32)
             ORDER BY j.name 
         ";
 }

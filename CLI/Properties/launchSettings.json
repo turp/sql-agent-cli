@@ -6,7 +6,7 @@
     },
     "sql-agent-cli": {
       "commandName": "Project",
-      "commandLineArgs": "import -s local -p ..\\..\\..\\jobs"
+      "commandLineArgs": "list -s local"
     }
   }
 }
