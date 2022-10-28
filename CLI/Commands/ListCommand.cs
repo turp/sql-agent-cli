@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
-using Dapper;
-using Spectre.Console;
+﻿using Dapper;
 using Spectre.Cli;
+using Spectre.Console;
 using SqlAgent.Cli.Models;
+using System.ComponentModel;
 
 namespace SqlAgent.Cli.Commands;
 
@@ -40,7 +40,7 @@ public class ListCommand : Command<ServerSettings>
 		return 0;
 	}
 
-	private string _sql = @$"
+	private readonly string _sql = @$"
             -- https://www.mssqltips.com/sqlservertip/5019/sql-server-agent-job-schedule-reporting/
 
 			-- manual jobs
@@ -68,10 +68,10 @@ public class ListCommand : Command<ServerSettings>
 	            , 'Daily' [Frequency]
 	            , 'every ' + cast (freq_interval as varchar(3)) + ' day(s)'  Days
 	            , CASE 
-		            WHEN freq_subday_type = 2 THEN ' every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            WHEN freq_subday_type = 4 THEN ' every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            WHEN freq_subday_type = 8 THEN ' every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            ELSE ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) + cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            WHEN freq_subday_type = 2 THEN 'every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            WHEN freq_subday_type = 4 THEN 'every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            WHEN freq_subday_type = 8 THEN 'every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            ELSE 'starting at ' + stuff(stuff(RIGHT(replicate('0', 6) + cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
 	            END [Time]
             FROM msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
@@ -98,10 +98,10 @@ public class ListCommand : Command<ServerSettings>
 		            , ''
 	            ) Days
 	            , CASE
-		            WHEN freq_subday_type = 2 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':') 
-		            WHEN freq_subday_type = 4 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            WHEN freq_subday_type = 8 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            ELSE ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            WHEN freq_subday_type = 2 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':') 
+		            WHEN freq_subday_type = 4 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            WHEN freq_subday_type = 8 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            ELSE 'starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
 	            END [Time]
             FROM msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
@@ -140,10 +140,10 @@ public class ListCommand : Command<ServerSettings>
 			            ,', ' ,'' )
 		            ) else cast(freq_interval as varchar(3)) END Days
 	            , case
-		            when freq_subday_type = 2 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':') 
-		            when freq_subday_type = 4 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            when freq_subday_type = 8 then ' every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
-		            else ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            when freq_subday_type = 2 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' seconds' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':') 
+		            when freq_subday_type = 4 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' minutes' + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            when freq_subday_type = 8 then 'every ' + cast(freq_subday_interval as varchar(7)) + ' hours'   + ' starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
+		            else 'starting at ' + stuff(stuff(RIGHT(replicate('0', 6) +  cast(active_start_time as varchar(6)), 6), 3, 0, ':'), 6, 0, ':')
 	            end [Time]
             from msdb.dbo.sysjobs j
 	            inner join msdb.dbo.sysjobschedules on j.job_id = sysjobschedules.job_id
