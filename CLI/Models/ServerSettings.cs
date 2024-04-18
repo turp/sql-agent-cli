@@ -1,26 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using Serilog;
+using Spectre.Console;
+using Spectre.Console.Cli;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
-using Serilog;
-using Spectre.Cli;
 
 namespace SqlAgent.Cli.Models;
 
-public class ServerSettings : CommandSettings
+public class ServerSettings(ServerLookup lookup, ILogger logger) : CommandSettings
 {
-	private readonly ILogger _logger;
+	private readonly ILogger _logger = logger;
 
 	[CommandOption("-s|--server <SERVER>")]
-	[Description(
-		@"Required. SQL Server instance (localhost | <server\instance, port> | server alias from appsetings).")]
+	[Description("Required. SQL Server instance (localhost | <server\\instance, port> | server alias from appsetings).")]
 	public string Server { get; set; }
 
-	private readonly Dictionary<string, string> _serverLookup;
-	public ServerSettings(ServerLookup lookup, ILogger logger)
-	{
-		_logger = logger;
-		_serverLookup = lookup ?? new Dictionary<string, string>();
-	}
+	private readonly Dictionary<string, string> _serverLookup = lookup ?? new Dictionary<string, string>();
 
 	public override ValidationResult Validate()
 	{

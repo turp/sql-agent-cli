@@ -6,7 +6,7 @@
     },
     "sql-agent-cli": {
       "commandName": "Project",
-      "commandLineArgs": "list -s local"
+      "commandLineArgs": "export -s p672 -p ..\\..\\..\\jobs"
     }
   }
 }

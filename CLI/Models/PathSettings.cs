@@ -1,11 +1,12 @@
-﻿using System.ComponentModel;
+﻿using Serilog;
+using Spectre.Console;
+using Spectre.Console.Cli;
+using System.ComponentModel;
 using System.IO;
-using Serilog;
-using Spectre.Cli;
 
 namespace SqlAgent.Cli.Models;
 
-public class PathSettings : ServerSettings
+public class PathSettings(ServerLookup lookup, ILogger logger) : ServerSettings(lookup, logger)
 {
 	[CommandOption("-p|--path <PATH>")]
 	[Description(@"Required. Directory path where job YAML files are stored.")]
@@ -18,10 +19,6 @@ public class PathSettings : ServerSettings
 	[CommandOption("-t|--target <NAME>")]
 	[Description(@"Optional. Environment target to allow for deploying different schedules based on server enviroment")]
 	public string Target { get; set; }
-
-	public PathSettings(ServerLookup lookup, ILogger logger) : base(lookup, logger)
-	{
-	}
 
 	public override ValidationResult Validate()
 	{

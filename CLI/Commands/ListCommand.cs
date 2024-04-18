@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using Spectre.Cli;
 using Spectre.Console;
+using Spectre.Console.Cli;
 using SqlAgent.Cli.Models;
 using System.ComponentModel;
 

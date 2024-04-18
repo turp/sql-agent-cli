@@ -1,12 +1,12 @@
-﻿using System.IO;
-using System.Linq;
-using Dapper;
+﻿using Dapper;
 using Spectre.Console;
-using Spectre.Cli;
+using Spectre.Console.Cli;
 using SqlAgent.Cli.Models;
+using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
-using System.ComponentModel;
 
 namespace SqlAgent.Cli.Commands;
 
@@ -21,18 +21,18 @@ public class ExportCommand : Command<PathSettings>
 		var result = c.QueryMultiple(_sqlQuery);
 
 		var jobs = result.Read();
-		var steps = result.Read();
-		var schedules = result.Read();
+		var steps = result.Read().ToList();
+		var schedules = result.Read().ToList();
 
 		foreach (var j in jobs)
 		{
 			var job = new Job
 			{
-				Name = j.Name
-				, Category = j.Category
-				, Description = j.Description
-				, Owner = j.Owner
-				, NotifyEmailOperator = j.NotifyEmailOperator
+				Name = j.Name,
+				Category = j.Category,
+				Description = j.Description,
+				Owner = j.Owner,
+				NotifyEmailOperator = j.NotifyEmailOperator
 			};
 
 			AnsiConsole.WriteLine($"* {j.Name}");
@@ -41,11 +41,11 @@ public class ExportCommand : Command<PathSettings>
 			{
 				job.Steps.Add(new Step
 				{
-					Name = o.name
-					, Command = o.command
-					, Subsystem = o.subsystem
-					, Database = o.database
-					, Proxy = o.proxy
+					Name = o.name,
+					Command = o.command,
+					Subsystem = o.subsystem,
+					Database = o.database,
+					Proxy = o.proxy
 				});
 			}
 
@@ -54,18 +54,25 @@ public class ExportCommand : Command<PathSettings>
 				var t = new SqlAgentSchedule
 				{
 					freq_interval = o.freq_interval
-					, freq_type = o.freq_type
-					, freq_recurrence_factor = o.freq_recurrence_factor
-					, freq_subday_type = o.freq_subday_type
-					, freq_subday_interval = o.freq_subday_interval
-					, freq_relative_interval = o.freq_relative_interval
-					, active_start_time = o.active_start_time
-					, active_end_time = o.active_end_time
+					,
+					freq_type = o.freq_type
+					,
+					freq_recurrence_factor = o.freq_recurrence_factor
+					,
+					freq_subday_type = o.freq_subday_type
+					,
+					freq_subday_interval = o.freq_subday_interval
+					,
+					freq_relative_interval = o.freq_relative_interval
+					,
+					active_start_time = o.active_start_time
+					,
+					active_end_time = o.active_end_time
 				};
 				job.Schedules.Add(new Schedule
 				{
-					Name = o.name, 
-					Enabled = o.enabled == 1, 
+					Name = o.name,
+					Enabled = o.enabled == 1,
 					Interval = t.ToString(),
 					Target = settings.Target
 				});
@@ -79,7 +86,8 @@ public class ExportCommand : Command<PathSettings>
 
 	private void Save(Job job, PathSettings settings)
 	{
-		var path = Path.Combine(settings.Path, $"{job.Name}.yml").Replace('?', '-');
+		var name = job.Name.Replace('\\', '-').Replace('/', '-').Replace('?', '-');
+		var path = Path.Combine(settings.Path, $"{name}.yml");
 		File.Delete(path);
 
 		var yaml = new SerializerBuilder()
@@ -90,7 +98,7 @@ public class ExportCommand : Command<PathSettings>
 		File.AppendAllText(path, text);
 	}
 
-	private string _sqlQuery = $@"
+	private readonly string _sqlQuery = @"
             SELECT
                 j.job_id
 	            , j.name [Name]

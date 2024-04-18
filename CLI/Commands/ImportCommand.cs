@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Dapper;
+using Spectre.Console;
+using Spectre.Console.Cli;
+using SqlAgent.Cli.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.SqlClient;
 using System.IO;
-using Dapper;
-using Spectre.Cli;
-using Spectre.Console;
-using SqlAgent.Cli.Models;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
@@ -158,7 +158,7 @@ public class ImportCommand : Command<PathSettings>
 			.Build();
 
 		var searchPattern = string.IsNullOrEmpty(settings.Name) ? "*.yml" : $"{settings.Name}.yml";
-            
+
 		foreach (var file in Directory.GetFiles(settings.Path, searchPattern))
 		{
 			var job = yaml.Deserialize<Job>(File.ReadAllText(file));

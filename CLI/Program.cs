@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Spectre.Cli;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog.Core;
 using Serilog;
+using Serilog.Core;
 using Serilog.Events;
+using Spectre.Console.Cli;
 using SqlAgent.Cli.Commands;
 using SqlAgent.Cli.Models;
 
